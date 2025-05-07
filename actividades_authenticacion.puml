@@ -1,0 +1,81 @@
+@startuml Autenticacion y Autorización
+title Autenticación y Autorización con Cookie HttpOnly + CSRF Token
+
+skinparam shadowing true
+
+|Frontend|
+start
+:Usuario ingresa credenciales;
+:Envía formulario de login;
+note right
+  POST /api/login
+  {username, password}
+end note
+
+|#AntiqueWhite|Backend|
+:Recibe credenciales;
+:Valida usuario y contraseña;
+
+if (¿Válidas?) then (Sí)
+  :Genera JWT token;
+  :Genera CSRF token;
+  :Configura cookies seguras;
+  :redirect a frontend/dashboard;
+  note left
+    Set-Cookie:
+    auth_token (HttpOnly, Secure)
+    XSRF-TOKEN (Secure)
+    SameSite=Strict
+    redirect('https://localhost:9000/dashboard')
+  end note
+  
+  |Frontend|
+  :Redirige a dashboard;
+else (No)
+  |Backend|
+  :Prepara respuesta error;
+  note left
+    HTTP 401
+    {error: 'Credenciales inválidas'}
+  end note
+  
+  |Frontend|
+  :Muestra error al usuario;
+  stop
+endif
+group Autorización
+|Frontend|
+:Realiza petición a ruta protegida;
+note right
+  GET /api/protected
+  Incluye cookies automáticamente
+  Añade X-XSRF-TOKEN header
+end note
+
+|Backend|
+:Recibe petición;
+:Verifica cookie auth_token;
+:Compara X-XSRF-TOKEN con cookie;
+
+if (¿Válido?) then (Sí)
+  :Procesa petición;
+  :Devuelve datos protegidos;
+  
+  |Frontend|
+  :Muestra datos al usuario;
+else (No)
+  |Backend|
+  :Rechaza petición;
+  :Redirect a frontend/login;
+  note left
+    redirect('localhost:9000/login')
+
+  end note
+  |Frontend|
+  :Redirige a login;
+  stop
+endif
+
+stop
+end group
+@enduml

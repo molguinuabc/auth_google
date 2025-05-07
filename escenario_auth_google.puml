@@ -1,0 +1,23 @@
+@startuml GoogleAuthSequenceDiagram
+
+actor Usuario as "Usuario (Navegador)"
+participant "Frontend (localhost:9000)" as Frontend
+participant "Backend (Express)" as Backend
+participant "Passport.js" as Passport
+participant "Google OAuth" as Google
+
+Usuario -> Frontend: Clic en \"Login con Google\"
+Frontend -> Backend: GET /auth/google
+Backend -> Passport: authenticate('google')
+Passport -> Google: Redirección a Google OAuth\n(con clientID, scope)
+Google -> Usuario: Mostrar página de login de Google
+Usuario -> Google: Ingresa credenciales
+Google -> Passport: POST /auth/google/callback\n(con código de autorización)
+Passport -> Google: Intercambia código por tokens\n(clientID, clientSecret, código)
+Google -> Passport: Devuelve accessToken y profile
+Passport -> Backend: Ejecuta callback de estrategia
+Backend -> Backend: Genera JWT y CSRF token
+Backend -> Frontend: Redirección a FRONTEND_URL\n(con cookies: auth_token, XSRF-TOKEN)
+Frontend -> Usuario: Muestra página principal
+
+@enduml
