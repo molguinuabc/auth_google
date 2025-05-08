@@ -104,9 +104,11 @@ app.get('/auth/google/callback',
 function validateAuth(req,res,next){
   const auth_token = req.cookies['auth_token']
   const xsrfToken = req.cookies['XSRF-TOKEN'];
-  const authAuthToken = req.headers['authorization'];
+  const authAuthToken = req.headers['authorization']; 
 
-  if(!auth_token || !xsrfToken || !authAuthToken ||
+
+  if(!auth_token || !xsrfToken || 
+    // !authAuthToken ||  descomentar cuando se use con un frontend real que envíe el token en el header
     generateXsrfToken(auth_token) !== xsrfToken) {
     res.status(401).send('Not Authorized');
     return;
@@ -149,14 +151,6 @@ app.get('/logout', (req, res) => {
 app.get('/', (req, res) => {
   res.send('Hola Mundo!')
 })
-
-// Ruta para simular una llamada del cliente
-// Establece el header Auhtorization
-// y redirige a la ruta protegida
-app.get('/consulta',(req,res,next)=>{
-  req.header['authorization'] = req.cookies.auth_token;
-  res.redirect('/api/protected');
-});
 
 app.get('/dashboard', (req, res) => {
     console.log('Cookie: auth_token\n', req.cookies.auth_token);

@@ -22,6 +22,6 @@ node server.js
 Con un navegador acceder a las siguientes rutas:
 /login
 
-/consulta  
+/api/protected  
 
 Debe desplegar el objeto de datos recibido de Google
