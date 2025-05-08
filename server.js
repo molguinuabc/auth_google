@@ -106,7 +106,7 @@ function validateAuth(req,res,next){
   const xsrfToken = req.cookies['XSRF-TOKEN'];
   const authAuthToken = req.headers['authorization'];
 
-  if(!auth_token || !xsrfToken || 
+  if(!auth_token || !xsrfToken || !authAuthToken ||
     generateXsrfToken(auth_token) !== xsrfToken) {
     res.status(401).send('Not Authorized');
     return;
