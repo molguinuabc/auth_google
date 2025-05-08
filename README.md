@@ -1,4 +1,4 @@
-# Node.js App
+# Demo de autenticación con Google
 
 ## Overview
 
@@ -19,9 +19,9 @@ mv env.example .env
 node server.js
 
 ## Forma de uso:
-Con un navegador acceder a las siguientes rutas:
-/login
-
-/api/protected  
+Con un navegador acceder a las siguientes rutas:   
+/api/protected <--- debe desplegar el mensaje "Not Authorized"   
+/login <--- despliega botón de login y realiza la autenticación con google   
+/api/protected <--- Si la autenticación fue exitosa debe desplegar los datos del profile de google   
 
 Debe desplegar el objeto de datos recibido de Google
